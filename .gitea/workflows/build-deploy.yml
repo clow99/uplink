@@ -12,13 +12,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
       - name: Build Docker image
-        run: docker-compose build
+        run: docker build -t uplink:latest .
 
       - name: Tag Docker image
         run: docker tag uplink:latest localhost:5000/uplink:live
