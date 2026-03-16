@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uplink.local/schemas/support-response.schema.json",
+  "title": "SupportResponse",
+  "description": "Structured output returned by the ISP support agent for every interaction. The host UI uses the current mode (customer, copilot, hybrid) to decide which fields to display.",
+  "type": "object",
+  "properties": {
+    "customer_response": {
+      "type": "string",
+      "description": "Customer-facing reply text. Populated in customer and hybrid modes. Empty string in copilot mode."
+    },
+    "diagnosis_notes": {
+      "type": "string",
+      "description": "Internal diagnostic summary for support staff. Populated in copilot and hybrid modes. Empty string in customer mode."
+    },
+    "likely_causes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered list of probable root causes, most likely first. Populated in copilot and hybrid modes."
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Facts, tool results, and document titles supporting the diagnosis. Each entry should cite its source (tool name or document title)."
+    },
+    "next_best_question": {
+      "type": "string",
+      "description": "The single most useful question to ask the customer next to narrow the diagnosis. Empty string if enough information is available."
+    },
+    "next_steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Recommended actions for the agent or customer, in priority order. Typically 1-3 items."
+    },
+    "escalation_recommended": {
+      "type": "boolean",
+      "description": "Whether the agent recommends escalating this issue to a higher support tier or dispatch.",
+      "default": false
+    },
+    "escalation_reason": {
+      "type": "string",
+      "description": "Explanation of why escalation is recommended. Empty string when escalation_recommended is false."
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Agent's confidence in the current diagnosis. low = needs more info, medium = plausible but not confirmed, high = strong evidence supports the conclusion.",
+      "default": "low"
+    },
+    "suggested_visuals": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Visual component IDs to display alongside this response. Choose from the available visual catalog when a diagram or illustration would help the customer understand the concept being discussed.",
+      "default": []
+    }
+  },
+  "required": [
+    "customer_response",
+    "diagnosis_notes",
+    "likely_causes",
+    "evidence",
+    "next_best_question",
+    "next_steps",
+    "escalation_recommended",
+    "escalation_reason",
+    "confidence"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "_comment": "Customer mode — only customer_response is meaningful",
+      "customer_response": "Let's start by checking if this is affecting all your devices or just one. Could you try loading a website on another phone or laptop connected to your Wi-Fi?",
+      "diagnosis_notes": "",
+      "likely_causes": [],
+      "evidence": [],
+      "next_best_question": "",
+      "next_steps": [],
+      "escalation_recommended": false,
+      "escalation_reason": "",
+      "confidence": "low"
+    },
+    {
+      "_comment": "Copilot mode — internal analysis only",
+      "customer_response": "",
+      "diagnosis_notes": "Customer reports no internet on all devices since this morning. Modem power light is solid, online light is blinking. check_outage returned no active outage for the address. get_service_status shows line_status: offline, last_seen 6 hours ago. Likely modem has lost sync.",
+      "likely_causes": [
+        "Modem lost upstream sync — possible line issue or modem failure",
+        "Coax/fiber connection degraded at the premises"
+      ],
+      "evidence": [
+        "check_outage: no outage detected for 123 Main St",
+        "get_service_status: line_status=offline, last_seen=2025-12-01T03:22:00Z",
+        "Customer confirms: online light blinking, power light solid"
+      ],
+      "next_best_question": "Has the customer tried a full power-cycle of the modem (unplug 30 seconds)?",
+      "next_steps": [
+        "Guide customer through modem power-cycle",
+        "If online light does not go solid after 5 minutes, escalate to network ops for line signal check"
+      ],
+      "escalation_recommended": false,
+      "escalation_reason": "",
+      "confidence": "medium"
+    },
+    {
+      "_comment": "Hybrid mode — both customer text and internal notes",
+      "customer_response": "It sounds like your internet has been down on all devices since this morning and the light on your modem is blinking. Let's try a quick reset: unplug the power cable from the back of your modem, wait 30 seconds, then plug it back in. After about 3-5 minutes, let me know if the light becomes solid.",
+      "diagnosis_notes": "All devices affected, modem online light blinking. No outage in area per check_outage. Service status shows offline for 6 hours. Modem sync loss is the most likely cause. Power-cycle is the correct first step. If it fails, escalation to network ops for signal diagnostics.",
+      "likely_causes": [
+        "Modem lost upstream sync",
+        "Possible line signal degradation"
+      ],
+      "evidence": [
+        "check_outage: no outage at customer address",
+        "get_service_status: line_status=offline, last_seen=6h ago",
+        "Customer: online light blinking, all devices affected"
+      ],
+      "next_best_question": "",
+      "next_steps": [
+        "Modem power-cycle (unplug 30s, wait 5 min)",
+        "If online light stays blinking, escalate to network ops"
+      ],
+      "escalation_recommended": false,
+      "escalation_reason": "",
+      "confidence": "medium"
+    }
+  ]
+}
