@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
 const wifiSchema = z.object({
@@ -80,7 +81,7 @@ export async function POST(request: Request) {
     data: {
       userId: session.user.id,
       platform: parsed.data.platform,
-      reportJson: parsed.data as unknown as Record<string, unknown>,
+      reportJson: parsed.data as unknown as Prisma.InputJsonValue,
       overallStatus: parsed.data.overallStatus,
     },
   });
