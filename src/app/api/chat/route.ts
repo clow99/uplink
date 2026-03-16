@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { openai } from "@/lib/ai/openai";
+import { getOpenAI } from "@/lib/ai/openai";
 import { buildMessages } from "@/lib/ai/build-messages";
 import { parseResponse } from "@/lib/ai/parse-response";
 import { getAvailableToolNames, executeTool } from "@/lib/tools/registry";
@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
   let rawContent: string;
 
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: "gpt-4o",
       messages,
       response_format: { type: "json_object" },

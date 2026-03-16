@@ -1,4 +1,4 @@
-import { openai } from "./ai/openai";
+import { getOpenAI } from "./ai/openai";
 
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const EMBEDDING_DIMENSIONS = 1536;
@@ -6,7 +6,7 @@ const EMBEDDING_DIMENSIONS = 1536;
 export { EMBEDDING_DIMENSIONS };
 
 export async function embedText(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
+  const response = await getOpenAI().embeddings.create({
     model: EMBEDDING_MODEL,
     input: text.slice(0, 8000),
   });
@@ -15,7 +15,7 @@ export async function embedText(text: string): Promise<number[]> {
 
 export async function embedBatch(texts: string[]): Promise<number[][]> {
   const trimmed = texts.map((t) => t.slice(0, 8000));
-  const response = await openai.embeddings.create({
+  const response = await getOpenAI().embeddings.create({
     model: EMBEDDING_MODEL,
     input: trimmed,
   });
