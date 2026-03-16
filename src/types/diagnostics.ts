@@ -53,6 +53,68 @@ export interface DiagnosticResults {
   ranAt: string | null;
 }
 
+// Desktop diagnostic types (from Electron app uploads)
+
+export interface DesktopWifiResult {
+  ssid: string;
+  bssid: string;
+  signalDbm: number;
+  signalPercent: number;
+  channel: number;
+  frequency: number;
+  radioType: string;
+  noiseDbm: number | null;
+  status: TestStatus;
+}
+
+export interface DesktopNearbyNetwork {
+  ssid: string;
+  bssid: string;
+  signalDbm: number;
+  channel: number;
+  security: string;
+}
+
+export interface DesktopChannelScanResult {
+  networks: DesktopNearbyNetwork[];
+  channelCongestion: Record<string, { count: number; avgSignal: number }>;
+  recommendedChannel: number | null;
+  status: TestStatus;
+}
+
+export interface DesktopNetworkDevice {
+  ip: string;
+  mac: string;
+  hostname: string | null;
+  isGateway: boolean;
+}
+
+export interface DesktopNetworkScanResult {
+  devices: DesktopNetworkDevice[];
+  gatewayIp: string | null;
+  subnetCidr: string | null;
+  status: TestStatus;
+}
+
+export interface DesktopDiagnosticReport {
+  version: string;
+  platform: string;
+  timestamp: string;
+  wifi: DesktopWifiResult | null;
+  channels: DesktopChannelScanResult | null;
+  network: DesktopNetworkScanResult | null;
+  overallStatus: TestStatus;
+}
+
+export interface StoredDiagnosticReport {
+  id: string;
+  userId: string;
+  platform: string;
+  reportJson: DesktopDiagnosticReport;
+  overallStatus: string;
+  createdAt: string;
+}
+
 export const EMPTY_RESULTS: DiagnosticResults = {
   connectivity: null,
   speedEstimation: null,

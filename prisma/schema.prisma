@@ -20,9 +20,10 @@ model User {
   password      String?
   role          String    @default("customer")
 
-  accounts      Account[]
-  sessions      Session[]
-  conversations Conversation[]
+  accounts          Account[]
+  sessions          Session[]
+  conversations     Conversation[]
+  diagnosticReports DiagnosticReport[]
 }
 
 model Account {
@@ -104,6 +105,19 @@ model ToolCall {
   message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
   @@index([messageId])
+}
+
+model DiagnosticReport {
+  id            String   @id @default(cuid())
+  userId        String
+  platform      String
+  reportJson    Json
+  overallStatus String
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model KnowledgeDocument {
