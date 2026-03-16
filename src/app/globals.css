@@ -55,8 +55,28 @@
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes hero-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
 
 .animate-signal-pulse { animation: signal-pulse 2.5s ease-out infinite; }
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-marching-ants { animation: marching-ants 1s linear infinite; }
 .animate-fade-in-up { animation: fade-in-up 0.6s ease-out both; }
+.animate-hero-glow { animation: hero-glow 4s ease-in-out infinite; }
+
+.hero-gradient-text {
+  background: linear-gradient(135deg, hsl(196 100% 57%), hsl(196 100% 72%), hsl(180 70% 60%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(to right, hsl(224 12% 18% / 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(224 12% 18% / 0.15) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent);
+}

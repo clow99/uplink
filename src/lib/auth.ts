@@ -7,7 +7,7 @@ import { prisma } from "./db";
 
 declare module "next-auth" {
   interface Session {
-    user: { id: string } & DefaultSession["user"];
+    user: { id: string; role: string } & DefaultSession["user"];
   }
 }
 
@@ -42,7 +42,7 @@ providers.push(
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) return null;
 
-        return { id: user.id, email: user.email, name: user.name };
+        return { id: user.id, email: user.email, name: user.name, role: user.role };
       },
     }),
 );
@@ -57,10 +57,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     session({ session, token }) {
       if (token.sub) session.user.id = token.sub;
+      if (token.role) session.user.role = token.role as string;
       return session;
     },
     jwt({ token, user }) {
-      if (user) token.sub = user.id;
+      if (user) {
+        token.sub = user.id;
+        token.role = (user as Record<string, unknown>).role ?? "customer";
+      }
       return token;
     },
   },

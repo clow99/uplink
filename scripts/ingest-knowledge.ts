@@ -3,14 +3,13 @@ import path from "path";
 import matter from "gray-matter";
 import { PrismaClient } from "@prisma/client";
 import OpenAI from "openai";
+import { chunkText } from "../src/lib/knowledge/chunk";
 
 const prisma = new PrismaClient();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const KNOWLEDGE_DIR = path.join(process.cwd(), "knowledge");
 const EMBEDDING_MODEL = "text-embedding-3-small";
-const MAX_CHUNK_CHARS = 6000;
-const OVERLAP_CHARS = 400;
 
 async function embedText(text: string): Promise<number[]> {
   const res = await openai.embeddings.create({
@@ -18,31 +17,6 @@ async function embedText(text: string): Promise<number[]> {
     input: text.slice(0, 8000),
   });
   return res.data[0].embedding;
-}
-
-function chunkText(text: string): string[] {
-  if (text.length <= MAX_CHUNK_CHARS) return [text];
-
-  const chunks: string[] = [];
-  let start = 0;
-
-  while (start < text.length) {
-    let end = start + MAX_CHUNK_CHARS;
-
-    if (end < text.length) {
-      const lastNewline = text.lastIndexOf("\n", end);
-      if (lastNewline > start + MAX_CHUNK_CHARS / 2) {
-        end = lastNewline;
-      }
-    }
-
-    chunks.push(text.slice(start, end));
-    start = end - OVERLAP_CHARS;
-    if (start < 0) start = 0;
-    if (end >= text.length) break;
-  }
-
-  return chunks;
 }
 
 function findMarkdownFiles(dir: string): string[] {

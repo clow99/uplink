@@ -10,16 +10,17 @@ import { ChatProvider } from "@/components/chat/chat-context";
 
 interface AppShellProps {
   children: React.ReactNode;
+  userRole?: string;
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, userRole }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <ChatProvider>
       <div className="flex h-dvh overflow-hidden">
         <aside className="hidden w-64 shrink-0 flex-col border-r bg-sidebar lg:flex">
-          <SidebarContent />
+          <SidebarContent userRole={userRole} />
         </aside>
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -28,7 +29,7 @@ export function AppShell({ children }: AppShellProps) {
             className="w-64 p-0"
             showCloseButton={false}
           >
-            <SidebarContent onNavigate={() => setMobileOpen(false)} />
+            <SidebarContent onNavigate={() => setMobileOpen(false)} userRole={userRole} />
           </SheetContent>
         </Sheet>
 

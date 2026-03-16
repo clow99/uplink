@@ -81,132 +81,86 @@ const STEPS = [
   },
 ];
 
-function HeroIllustration() {
+function HeroVisual() {
   return (
-    <svg
-      viewBox="0 0 400 360"
-      className="w-full max-w-md"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Ambient grid dots */}
-      {Array.from({ length: 8 }).map((_, row) =>
-        Array.from({ length: 10 }).map((_, col) => (
-          <circle
-            key={`dot-${row}-${col}`}
-            cx={20 + col * 40}
-            cy={20 + row * 45}
-            r="1"
-            fill="#3abff8"
-            opacity="0.08"
-          />
-        )),
-      )}
+    <div className="relative w-full max-w-md">
+      <div className="animate-hero-glow absolute -inset-6 rounded-3xl bg-primary/[0.07] blur-3xl" />
 
-      {/* Signal pulse rings from router */}
-      {[60, 90, 120, 150].map((r, i) => (
-        <circle
-          key={`pulse-${i}`}
-          cx="200"
-          cy="160"
-          r={r}
-          fill="none"
-          stroke="#3abff8"
-          strokeWidth="1"
-          opacity="0"
-          className="animate-signal-pulse"
-          style={{ animationDelay: `${i * 0.6}s` }}
-        />
-      ))}
+      <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/90 shadow-2xl shadow-primary/10 backdrop-blur-sm">
+        <div className="flex items-center gap-2 border-b border-border/40 bg-muted/30 px-4 py-3">
+          <span className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
+          <span className="h-2.5 w-2.5 rounded-full bg-warning/60" />
+          <span className="h-2.5 w-2.5 rounded-full bg-success/60" />
+          <span className="ml-3 text-xs font-medium text-muted-foreground">
+            Uplink Chat
+          </span>
+        </div>
 
-      {/* Connection lines from router to devices */}
-      <line x1="200" y1="160" x2="90" y2="80" stroke="#3abff8" strokeWidth="1" opacity="0.15" strokeDasharray="4 4" />
-      <line x1="200" y1="160" x2="320" y2="70" stroke="#3abff8" strokeWidth="1" opacity="0.15" strokeDasharray="4 4" />
-      <line x1="200" y1="160" x2="80" y2="270" stroke="#3abff8" strokeWidth="1" opacity="0.15" strokeDasharray="4 4" />
-      <line x1="200" y1="160" x2="330" y2="260" stroke="#3abff8" strokeWidth="1" opacity="0.15" strokeDasharray="4 4" />
+        <div className="space-y-4 p-5">
+          <div className="flex justify-end">
+            <div className="max-w-[75%] rounded-2xl rounded-br-sm bg-primary px-4 py-2.5 text-sm text-primary-foreground">
+              My internet keeps dropping every few minutes
+            </div>
+          </div>
 
-      {/* Data flow dots traveling along lines */}
-      {[
-        { x1: 200, y1: 160, x2: 90, y2: 80, delay: "0s" },
-        { x1: 200, y1: 160, x2: 320, y2: 70, delay: "0.8s" },
-        { x1: 200, y1: 160, x2: 80, y2: 270, delay: "1.6s" },
-        { x1: 200, y1: 160, x2: 330, y2: 260, delay: "0.4s" },
-      ].map((line, i) => (
-        <circle key={`flow-${i}`} r="3" fill="#3abff8" opacity="0.6">
-          <animateMotion
-            dur="3s"
-            repeatCount="indefinite"
-            begin={line.delay}
-            path={`M${line.x1},${line.y1} L${line.x2},${line.y2}`}
-          />
-        </circle>
-      ))}
+          <div className="flex gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+              <Wifi className="h-4 w-4 text-primary" />
+            </div>
+            <div className="space-y-2 rounded-2xl rounded-tl-sm bg-muted/80 px-4 py-3 text-sm">
+              <p>Let&apos;s troubleshoot step by step:</p>
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
+                  <span className="text-muted-foreground">
+                    Check modem &mdash; is{" "}
+                    <span className="text-foreground">Online</span> light solid?
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border border-border" />
+                  <span className="text-muted-foreground">
+                    Restart: unplug for{" "}
+                    <span className="text-foreground">30 seconds</span>
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border border-border" />
+                  <span className="text-muted-foreground">
+                    Test with Ethernet cable
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* Router (center) */}
-      <g>
-        <rect x="175" y="145" width="50" height="30" rx="6" fill="#1a2332" stroke="#3abff8" strokeWidth="1.5" />
-        <line x1="190" y1="145" x2="187" y2="130" stroke="#3abff8" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="200" y1="145" x2="200" y2="127" stroke="#3abff8" strokeWidth="1.5" strokeLinecap="round" />
-        <line x1="210" y1="145" x2="213" y2="130" stroke="#3abff8" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="185" cy="165" r="2" fill="#22c55e">
-          <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="193" cy="165" r="2" fill="#22c55e" />
-        <circle cx="201" cy="165" r="2" fill="#3abff8" />
-        <circle cx="209" cy="165" r="2" fill="#3abff8">
-          <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite" />
-        </circle>
-      </g>
+          <div className="flex flex-wrap gap-2 pl-11">
+            {["Check modem", "Restart modem", "Test Ethernet"].map((chip) => (
+              <span
+                key={chip}
+                className="rounded-full border border-primary/20 bg-primary/[0.08] px-3 py-1 text-xs font-medium text-primary"
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
 
-      {/* Laptop (top-left) */}
-      <g>
-        <rect x="60" y="60" width="56" height="36" rx="4" fill="#1a2332" stroke="#334155" strokeWidth="1" />
-        <rect x="66" y="65" width="44" height="26" rx="2" fill="#0f172a" />
-        <rect x="70" y="72" width="20" height="2" rx="1" fill="#3abff8" opacity="0.5" />
-        <rect x="70" y="78" width="30" height="2" rx="1" fill="#3abff8" opacity="0.3" />
-        <rect x="70" y="84" width="15" height="2" rx="1" fill="#3abff8" opacity="0.2" />
-        <rect x="52" y="96" width="72" height="4" rx="2" fill="#1a2332" stroke="#334155" strokeWidth="1" />
-        <circle cx="110" cy="64" r="3" fill="#22c55e" opacity="0.8" />
-      </g>
+      <div className="absolute -top-3 -right-3 z-10 flex items-center gap-1.5 rounded-full border border-success/30 bg-card px-3 py-1.5 text-xs shadow-lg">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+        </span>
+        <span className="font-medium text-success">Online</span>
+      </div>
 
-      {/* Phone (top-right) */}
-      <g>
-        <rect x="305" y="50" width="30" height="52" rx="5" fill="#1a2332" stroke="#334155" strokeWidth="1" />
-        <rect x="310" y="58" width="20" height="34" rx="2" fill="#0f172a" />
-        <rect x="313" y="64" width="14" height="2" rx="1" fill="#3abff8" opacity="0.4" />
-        <rect x="313" y="70" width="10" height="2" rx="1" fill="#3abff8" opacity="0.3" />
-        <rect x="313" y="76" width="12" height="2" rx="1" fill="#22c55e" opacity="0.4" />
-        <circle cx="320" cy="97" r="2.5" fill="none" stroke="#334155" strokeWidth="0.8" />
-        <circle cx="330" cy="54" r="3" fill="#22c55e" opacity="0.8" />
-      </g>
-
-      {/* Tablet (bottom-left) */}
-      <g>
-        <rect x="50" y="248" width="56" height="44" rx="5" fill="#1a2332" stroke="#334155" strokeWidth="1" />
-        <rect x="55" y="253" width="46" height="34" rx="2" fill="#0f172a" />
-        <circle cx="78" cy="270" r="10" fill="none" stroke="#3abff8" strokeWidth="0.6" opacity="0.3" />
-        <circle cx="78" cy="270" r="6" fill="none" stroke="#3abff8" strokeWidth="0.6" opacity="0.4" />
-        <circle cx="78" cy="270" r="2" fill="#3abff8" opacity="0.6" />
-        <circle cx="100" cy="252" r="3" fill="#22c55e" opacity="0.8" />
-      </g>
-
-      {/* Smart TV (bottom-right) */}
-      <g>
-        <rect x="300" y="240" width="64" height="40" rx="4" fill="#1a2332" stroke="#334155" strokeWidth="1" />
-        <rect x="305" y="245" width="54" height="30" rx="2" fill="#0f172a" />
-        <rect x="310" y="251" width="30" height="2" rx="1" fill="#3abff8" opacity="0.4" />
-        <rect x="310" y="257" width="40" height="2" rx="1" fill="#22c55e" opacity="0.3" />
-        <rect x="310" y="263" width="20" height="2" rx="1" fill="#3abff8" opacity="0.2" />
-        <rect x="322" y="280" width="20" height="6" rx="1" fill="#1a2332" stroke="#334155" strokeWidth="0.8" />
-        <circle cx="358" cy="244" r="3" fill="#22c55e" opacity="0.8" />
-      </g>
-
-      {/* Labels */}
-      <text x="88" y="115" textAnchor="middle" fill="#7c8ca1" fontSize="10" fontFamily="system-ui, sans-serif">Laptop</text>
-      <text x="320" y="115" textAnchor="middle" fill="#7c8ca1" fontSize="10" fontFamily="system-ui, sans-serif">Phone</text>
-      <text x="78" y="305" textAnchor="middle" fill="#7c8ca1" fontSize="10" fontFamily="system-ui, sans-serif">Tablet</text>
-      <text x="332" y="300" textAnchor="middle" fill="#7c8ca1" fontSize="10" fontFamily="system-ui, sans-serif">Smart TV</text>
-      <text x="200" y="195" textAnchor="middle" fill="#3abff8" fontSize="11" fontWeight="600" fontFamily="system-ui, sans-serif">Router</text>
-    </svg>
+      <div className="absolute -bottom-3 -left-3 z-10 flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-3 py-1.5 text-xs shadow-lg">
+        <ArrowDown className="h-3 w-3 text-primary" />
+        <span className="font-bold tabular-nums">485</span>
+        <span className="text-muted-foreground">Mbps</span>
+      </div>
+    </div>
   );
 }
 
@@ -444,29 +398,30 @@ export default function HomePage() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="relative z-10 mx-auto max-w-6xl px-6 pb-12 pt-10 sm:pt-16 lg:pb-20">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          {/* Text */}
+      <section className="relative z-10 mx-auto max-w-6xl px-6 pb-16 pt-12 sm:pt-20 lg:pb-24">
+        <div aria-hidden className="hero-grid pointer-events-none absolute inset-0" />
+
+        <div className="relative grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <div className="text-center lg:text-left">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-sm text-primary">
+            <div className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-sm text-primary">
               <Zap className="h-3.5 w-3.5" />
               AI-Powered ISP Support
             </div>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="animate-fade-in-up text-4xl font-bold tracking-tight [animation-delay:100ms] sm:text-5xl lg:text-6xl">
               Internet issues?
               <br />
-              <span className="text-primary">Solved in seconds.</span>
+              <span className="hero-gradient-text">Solved in seconds.</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground lg:mx-0">
+            <p className="animate-fade-in-up mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground [animation-delay:200ms] lg:mx-0">
               Uplink is your AI support assistant for troubleshooting internet,
               Wi-Fi, modem, and router problems &mdash; with real-time diagnostics
               and guided fixes.
             </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
-              <Button size="lg" asChild>
+            <div className="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-3 [animation-delay:300ms] sm:flex-row lg:justify-start">
+              <Button size="lg" className="group" asChild>
                 <Link href="/login">
                   Start Chatting
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
@@ -475,9 +430,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Illustration */}
-          <div className="flex justify-center lg:justify-end">
-            <HeroIllustration />
+          <div className="animate-fade-in-up flex justify-center [animation-delay:200ms] lg:justify-end">
+            <HeroVisual />
           </div>
         </div>
       </section>

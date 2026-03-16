@@ -13,6 +13,8 @@ import {
   LogOut,
   ChevronRight,
   Lightbulb,
+  ShieldCheck,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -103,13 +105,19 @@ const LEARN_MORE_LINKS = [
   },
 ];
 
+const ADMIN_NAV_ITEMS = [
+  { icon: FileText, label: "Knowledge Base", href: "/admin/knowledge" },
+];
+
 interface SidebarContentProps {
   onNavigate?: () => void;
+  userRole?: string;
 }
 
-export function SidebarContent({ onNavigate }: SidebarContentProps) {
+export function SidebarContent({ onNavigate, userRole }: SidebarContentProps) {
   const pathname = usePathname();
   const { sendToChat } = useChatContext();
+  const isAdmin = userRole === "admin";
 
   function handleTopicClick(query: string) {
     sendToChat(query);
@@ -153,6 +161,38 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
             </Link>
           ))}
         </div>
+
+        {isAdmin && (
+          <>
+            <Separator className="my-4" />
+            <div>
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="h-3 w-3" />
+                  Admin
+                </span>
+              </p>
+              <div className="space-y-1">
+                {ADMIN_NAV_ITEMS.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onNavigate}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      pathname.startsWith(item.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
 
         <Separator className="my-4" />
 
@@ -222,12 +262,16 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
 
       <div className="flex items-center gap-3 px-4 py-3">
         <Avatar className="h-8 w-8">
-          <AvatarFallback className="text-xs">CU</AvatarFallback>
+          <AvatarFallback className="text-xs">
+            {isAdmin ? "AD" : "CU"}
+          </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">Customer</p>
+          <p className="truncate text-sm font-medium">
+            {isAdmin ? "Admin" : "Customer"}
+          </p>
           <p className="truncate text-[11px] text-muted-foreground">
-            Residential Plan
+            {isAdmin ? "Administrator" : "Residential Plan"}
           </p>
         </div>
         <Button
